@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.controller.customerExamPaper.mapper.CustomerPaperMapper">
+    
+    <resultMap type="CustomerPaper" id="CustomerPaperResult">
+        <result property="id"    column="id"    />
+        <result property="customerId"    column="customer_id"    />
+        <result property="examPaperId"    column="exam_paper_id"    />
+        <result property="score"    column="score"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="status" column="status"/>
+    </resultMap>
+
+    <sql id="selectCustomerPaperVo">
+        select id, customer_id, exam_paper_id, score, create_time, update_time,status from customer_paper
+    </sql>
+
+    <select id="selectCustomerPaperList" parameterType="CustomerPaper" resultMap="CustomerPaperResult">
+        <include refid="selectCustomerPaperVo"/>
+        <where>  
+            <if test="customerId != null "> and customer_id = #{customerId}</if>
+            <if test="examPaperId != null "> and exam_paper_id = #{examPaperId}</if>
+            <if test="score != null "> and score = #{score}</if>
+            <if test="status != null "> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectCustomerPaperById" parameterType="Integer" resultMap="CustomerPaperResult">
+        <include refid="selectCustomerPaperVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectScoreList" resultType="java.lang.Double">
+        select score
+        from exam_paper_history eph
+        left join question on eph.question_id = question.id
+        <where>
+            <if test="customerId != null ">and customer_id = #{customerId}</if>
+            <if test="examPaperId != null ">and exam_paper_id = #{examPaperId}</if>
+        </where>
+        and is_answered=1 and answer_correct=1
+    </select>
+    <select id="selectPaperIds" resultType="java.lang.Long">
+        select exam_paper_id
+        from customer_paper
+        <where>
+            <if test="customerId !=null">and customer_id=#{customerId}</if>
+        </where>
+    </select>
+    <select id="selectByExamPaperId"
+            resultMap="CustomerPaperResult">
+        SELECT *
+        FROM customer_paper
+        <where>
+            <if test="examPaperId !=null">and exam_paper_id = #{examPaperId}</if>
+            <if test="customerId !=null">and customer_id=#{customerId}</if>
+        </where>
+        ORDER BY create_time DESC
+        LIMIT 1
+    </select>
+
+
+    <insert id="insertCustomerPaper" parameterType="CustomerPaper" useGeneratedKeys="true" keyProperty="id">
+        insert into customer_paper
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="customerId != null">customer_id,</if>
+            <if test="examPaperId != null">exam_paper_id,</if>
+            <if test="score != null">score,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="customerId != null">#{customerId},</if>
+            <if test="examPaperId != null">#{examPaperId},</if>
+            <if test="score != null">#{score},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCustomerPaper" parameterType="CustomerPaper">
+        update customer_paper
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="customerId != null">customer_id = #{customerId},</if>
+            <if test="examPaperId != null">exam_paper_id = #{examPaperId},</if>
+            <if test="score != null">score = #{score},</if>
+            <if test="status!=null">status=#{status},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+    <delete id="deleteCustomerPaperById" parameterType="Integer">
+        delete from customer_paper where id = #{id}
+    </delete>
+
+    <delete id="deleteCustomerPaperByIds" parameterType="String">
+        delete from customer_paper where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

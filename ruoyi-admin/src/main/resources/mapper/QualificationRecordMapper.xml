@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruoyi.api.mapper.QualificationRecordMapper">
+
+    <resultMap type="QualificationRecord" id="QualificationRecordType">
+        <result property="id"    column="id"    />
+        <result property="institutionId"    column="institutionId"    />
+        <result property="fileUrl"    column="fileUrl"    />
+        <result property="fileType"    column="fileType"    />
+        <result property="updateTime"    column="updateTime"    />
+        <result property="status"    column="status"    />
+        <result property="phone"    column="phone"    />
+    </resultMap>
+    <insert id="insert" parameterType="com.ruoyi.api.domain.QualificationRecord">
+        insert into qualification_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="institutionId!= null">institution_id,</if>
+            <if test="fileUrl != null">file_url,</if>
+            <if test="fileType != null">file_type,</if>
+            <if test="updateTime != null">upload_time,</if>
+            <if test="status != null">status,</if>
+            <if test="phone != null">phone,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="institutionId != null">#{institutionId},</if>
+            <if test="fileUrl != null">#{fileUrl},</if>
+            <if test="fileType != null">#{fileType},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="status != null">#{status},</if>
+            <if test="phone != null">#{phone},</if>
+        </trim>
+    </insert>
+
+
+</mapper>

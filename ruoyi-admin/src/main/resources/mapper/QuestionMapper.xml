@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.controller.question.mapper.QuestionMapper">
+
+    <resultMap type="Question" id="QuestionResult">
+        <result property="id"    column="id"    />
+        <result property="content"    column="content"    />
+        <result property="answer"    column="answer"    />
+        <result property="score"    column="score"    />
+        <result property="type"    column="type"    />
+        <result property="option"    column="option"    />
+    </resultMap>
+
+    <sql id="selectQuestionVo">
+        select id, content, answer, type,score,`option` from question
+    </sql>
+
+    <select id="selectQuestionList" parameterType="Question" resultMap="QuestionResult">
+        <include refid="selectQuestionVo"/>
+        <where>
+            <if test="content != null  and content != ''"> and  content LIKE CONCAT('%', #{content}, '%')</if>
+            <if test="answer != null  and answer != ''"> and answer = #{answer}</if>
+            <if test="type != null  and type != ''"> and type = #{type}</if>
+            <if test="score != null  and score != ''"> and score = #{score}</if>
+            <if test="option != null  and option != ''"> and option = #{option}</if>
+        </where>
+    </select>
+
+    <select id="selectQuestionById" parameterType="Long" resultMap="QuestionResult">
+        <include refid="selectQuestionVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectTop10" resultType="com.ruoyi.web.controller.question.domain.Question">
+        <include refid="selectQuestionVo"/>
+        where limit #{pageLimit} offset #{pageNum}
+    </select>
+    <select id="getAllQuestionIds" resultType="java.lang.Integer">
+        select id from question
+    </select>
+    <select id="getAllType" resultType="java.lang.String">
+        select type
+        from question
+        where type != ''
+          and type IS NOT NULL
+        group by type
+
+    </select>
+    <select id="getAllTypeAndCount" resultType="com.ruoyi.web.controller.ExamPaper.domain.TypeDto">
+        select type,count(type) 'count'
+        from question
+        where type != ''
+          and type IS NOT NULL
+        group by type
+    </select>
+    <!--    <select id="selectHistoryQuestion" resultType="java.lang.Integer">-->
+<!--        select qh.question_id-->
+<!--        from question_history qh-->
+<!--        left join question q on qh.question_id=q.id-->
+<!--        left join customer c on c.id=qh.customer_id-->
+<!--        where is_answer=1-->
+<!--        order by id desc-->
+<!--        limit 1-->
+<!--    </select>-->
+
+
+    <insert id="insertQuestion" parameterType="Question">
+        insert into question
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="content != null">content,</if>
+            <if test="answer != null">answer,</if>
+            <if test="type != null">type,</if>
+            <if test="option != null">`option`,</if>
+            <if test="score != null">score,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="content != null">#{content},</if>
+            <if test="answer != null">#{answer},</if>
+            <if test="type != null">#{type},</if>
+            <if test="option != null">#{option},</if>
+            <if test="score != null">#{score},</if>
+        </trim>
+    </insert>
+<!-- 原有的基于id更新的方法保持不变 -->
+    <update id="updateQuestion" parameterType="Question">
+        update question
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="content != null">content = #{content},</if>
+            <if test="answer != null">answer = #{answer},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="option != null">`option` = #{option},</if>
+            <if test="score != null">score = #{score},</if>
+        </trim>
+        where id = #{id}
+    </update>
+<!-- 新增基于content更新的方法 -->
+<update id="updateQuestionByContent" parameterType="Question">
+    update question
+    <trim prefix="SET" suffixOverrides=",">
+        <if test="answer != null">answer = #{answer},</if>
+        <if test="type != null">type = #{type},</if>
+        <if test="option != null">`option` = #{option},</if>
+        <if test="score != null">score = #{score},</if>
+    </trim>
+    where content = #{content}
+</update>
+    <insert id="saveOrUpdateQuestion" parameterType="Question">
+        INSERT INTO question (content, answer, type, `option`, score)
+        SELECT #{content}, #{answer}, #{type}, #{option}, #{score}
+        FROM DUAL
+        WHERE NOT EXISTS (
+            SELECT 1 FROM question 
+            WHERE content = #{content}
+        );
+    </insert>
+
+    <delete id="deleteQuestionById" parameterType="Long">
+        delete from question where id = #{id}
+    </delete>
+
+    <delete id="deleteQuestionByIds" parameterType="String">
+        delete from question where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

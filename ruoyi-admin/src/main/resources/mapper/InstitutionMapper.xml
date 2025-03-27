@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.controller.institutionmore.mapper.InstitutionMapper">
+
+    <resultMap type="Institution" id="InstitutionResult">
+        <result property="id"    column="id"    />
+        <result property="province"    column="province"    />
+        <result property="companyname"    column="companyname"    />
+        <result property="base"    column="base"    />
+        <result property="office"    column="office"    />
+        <result property="creditcode"    column="creditcode"    />
+        <result property="legalperson"    column="legalperson"    />
+        <result property="responsibleperson"    column="responsibleperson"    />
+        <result property="phone"    column="phone"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="score"    column="score"    />
+        <result property="orderId"    column="orderId"    />
+        <result property="latitude"    column="latitude"    />
+        <result property="longitude"    column="longitude"    />
+        <result property="url"    column="url"    />
+        <result property="introduce"    column="introduce"    />
+    </resultMap>
+
+    <sql id="selectInstitutionVo">
+        select institution.id, province, companyname, base, office, creditcode, legalperson, responsibleperson, phone, create_time, update_time, score,order_id,latitude,longitude,introduce,ip.url from institution
+        left join institution_picture ip on institution.id = ip.institution_id
+    </sql>
+
+    <select id="selectInstitutionList" parameterType="Institution" resultMap="InstitutionResult">
+        <include refid="selectInstitutionVo"/>
+        <where>
+            <if test="province != null  and province != ''"> and province = #{province}</if>
+            <if test="companyname != null  and companyname != ''"> and companyname like concat('%', #{companyname}, '%')</if>
+            <if test="creditcode != null  and creditcode != ''"> and creditcode = #{creditcode}</if>
+            <if test="legalperson != null  and legalperson != ''"> and legalperson = #{legalperson}</if>
+        </where>
+    </select>
+
+    <select id="selectInstitutionById" parameterType="Integer" resultMap="InstitutionResult">
+        <include refid="selectInstitutionVo"/>
+        where institution.id = #{id}
+    </select>
+    <select id="getMaxOrderId" resultType="java.lang.Integer">
+        select Max(order_id) from institution;
+    </select>
+    <select id="getAverageScore" resultType="java.lang.Double">
+        select IFNULL(ROUND(AVG(c.score),1),null) from comment c
+        join institution on institution.id = c.institution_id
+        where institution.id=#{id}
+    </select>
+    <select id="selectByDesc" resultType="com.ruoyi.web.controller.institutionmore.domain.Institution">
+        select * from institution
+        order by score desc
+    </select>
+    <select id="selectProvinceList" resultType="java.lang.String">
+        select DISTINCT province from institution
+    </select>
+    <select id="selectInstitutionByUserId"
+            resultType="com.ruoyi.web.controller.institutionmore.domain.Institution">
+        select * from institution where institution.customer_id=#{id}
+    </select>
+
+
+    <insert id="insertInstitution" parameterType="Institution" useGeneratedKeys="true" keyProperty="id">
+        insert into institution
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="province != null">province,</if>
+            <if test="companyname != null">companyname,</if>
+            <if test="base != null">base,</if>
+            <if test="office != null">office,</if>
+            <if test="creditcode != null">creditcode,</if>
+            <if test="legalperson != null">legalperson,</if>
+            <if test="responsibleperson != null">responsibleperson,</if>
+            <if test="phone != null">phone,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="score != null">score,</if>
+            <if test="orderId != null">order_id,</if>
+            <if test="latitude != null">latitude,</if>
+            <if test="longitude != null">longitude,</if>
+            <if test="introduce != null">introduce,</if>
+            <if test="customerId != null">customer_id,</if>
+            <if test="url != null">url,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="province != null">#{province},</if>
+            <if test="companyname != null">#{companyname},</if>
+            <if test="base != null">#{base},</if>
+            <if test="office != null">#{office},</if>
+            <if test="creditcode != null">#{creditcode},</if>
+            <if test="legalperson != null">#{legalperson},</if>
+            <if test="responsibleperson != null">#{responsibleperson},</if>
+            <if test="phone != null">#{phone},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="score != null">#{score},</if>
+            <if test="orderId != null">#{orderId},</if>
+            <if test="latitude != null">#{latitude},</if>
+            <if test="longitude != null">#{longitude},</if>
+            <if test="introduce != null">#{introduce},</if>
+            <if test="customerId != null">#{customerId},</if>
+            <if test="url != null">#{url},</if>
+         </trim>
+    </insert>
+
+    <update id="updateInstitution" parameterType="Institution">
+        update institution
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="province != null">province = #{province},</if>
+            <if test="companyname != null">companyname = #{companyname},</if>
+            <if test="base != null">base = #{base},</if>
+            <if test="office != null">office = #{office},</if>
+            <if test="creditcode != null">creditcode = #{creditcode},</if>
+            <if test="legalperson != null">legalperson = #{legalperson},</if>
+            <if test="responsibleperson != null">responsibleperson = #{responsibleperson},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="score != null">score = #{score},</if>
+            <if test="orderId != null">order_id = #{orderId},</if>
+            <if test="latitude != null">latitude = #{latitude},</if>
+            <if test="longitude != null">longitude = #{longitude},</if>
+            <if test="introduce != null">introduce = #{introduce},</if>
+            <if test="customerId != null">order_id = #{customerId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+    <update id="updateOrderId">
+        update institution set order_id=#{orderId}
+        where id=#{id}
+    </update>
+    <update id="update" parameterType="map">
+        update institution
+        <set>
+            <if test="customerId != null">
+                customer_id = #{customerId},
+            </if>
+        </set>
+            where id=#{id}
+    </update>
+    <update id="editUrl">
+        update institution_picture set url=#{url}
+            where institution_id=#{id}
+    </update>
+
+    <delete id="deleteInstitutionById" parameterType="Integer">
+        delete from institution where id = #{id}
+    </delete>
+
+    <delete id="deleteInstitutionByIds" parameterType="String">
+        delete from institution where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

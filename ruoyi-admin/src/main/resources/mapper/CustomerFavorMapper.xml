@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.controller.customerfavor.mapper.CustomerFavorMapper">
+    
+    <resultMap type="CustomerFavor" id="CustomerFavorResult">
+        <result property="id"    column="id"    />
+        <result property="questionId"    column="question_id"    />
+        <result property="examPaperId"    column="exam_paper_id"    />
+        <result property="institutionId"    column="institution_id"    />
+        <result property="customerId"    column="customer_id"    />
+        <result property="favouriteTime"    column="favourite_time"    />
+    </resultMap>
+
+    <sql id="selectCustomerFavorVo">
+        select id, question_id, exam_paper_id, institution_id, customer_id,favourite_time from customer_favor
+    </sql>
+
+    <select id="selectCustomerFavorList" parameterType="CustomerFavor" resultMap="CustomerFavorResult">
+        <include refid="selectCustomerFavorVo"/>
+        <where>  
+            <if test="questionId != null "> and question_id = #{questionId}</if>
+            <if test="examPaperId != null "> and exam_paper_id = #{examPaperId}</if>
+            <if test="institutionId != null "> and institution_id = #{institutionId}</if>
+            <if test="customerId != null "> and customer_id = #{customerId}</if>
+            <if test="favouriteTime!=null"> and favourite_time = #{favouriteTime},</if>
+        </where>
+    </select>
+    
+    <select id="selectCustomerFavorById" parameterType="Integer" resultMap="CustomerFavorResult">
+        <include refid="selectCustomerFavorVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertCustomerFavor" parameterType="CustomerFavor" useGeneratedKeys="true" keyProperty="id">
+        insert into customer_favor
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="questionId != null">question_id,</if>
+            <if test="examPaperId != null">exam_paper_id,</if>
+            <if test="institutionId != null">institution_id,</if>
+            <if test="customerId != null">customer_id,</if>
+            <if test="favouriteTime!=null">favourite_time</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="questionId != null">#{questionId},</if>
+            <if test="examPaperId != null">#{examPaperId},</if>
+            <if test="institutionId != null">#{institutionId},</if>
+            <if test="customerId != null">#{customerId},</if>
+            <if test="favouriteTime!=null">#{favouriteTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCustomerFavor" parameterType="CustomerFavor">
+        update customer_favor
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="questionId != null">question_id = #{questionId},</if>
+            <if test="examPaperId != null">exam_paper_id = #{examPaperId},</if>
+            <if test="institutionId != null">institution_id = #{institutionId},</if>
+            <if test="customerId != null">customer_id = #{customerId},</if>
+            <if test="favouriteTime != null">favourite_time = #{favouriteTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCustomerFavorById" parameterType="Integer">
+        delete from customer_favor where id = #{id}
+    </delete>
+
+    <delete id="deleteCustomerFavorByIds" parameterType="String">
+        delete from customer_favor where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

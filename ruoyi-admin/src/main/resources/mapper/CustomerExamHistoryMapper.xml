@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.api.mapper.CustomerExamHistoryMapper">
+
+    <resultMap type="CustomerExamHistory" id="PaperQuestionsResult">
+        <result property="customerName" column="customerName"/>
+        <result property="title"    column="title"    />
+        <result property="option"    column="option"    />
+        <result property="answer"    column="answer"    />
+        <result property="type"    column="type"    />
+        <result property="score"    column="score"    />
+        <result property="isAnswered"    column="isAnswered"    />
+        <result property="answerCorrect"    column="answerCorrect"    />
+        <result property="customerAnswer"    column="customerAnswer"    />
+    </resultMap>
+    <select id="selectQuestionsByExamPaperId" resultType="com.ruoyi.api.domain.CustomerExamHistory">
+        select q.content as title,
+               q.option as 'option',
+        q.type as type,
+        q.answer as answer,
+        eph.is_answered as isAnswered,
+        eph.answer_correct as answerCorrect,
+        eph.customer_answer as customerAnswer
+        from question q
+                 left join exam_paper_history eph on q.id=eph.question_id
+                 left join exam_paper ep on eph.exam_paper_id=ep.id
+                 left join customer c on eph.customer_id=c.id
+    </select>
+    <select id="selectExamPaperListByCustomerId" resultType="com.ruoyi.api.domain.CustomerExamHistory">
+        select q.id as id,
+        q.content as title,
+        q.option as 'option',
+        q.type as type,
+        q.answer as answer,
+        epd.score as score,
+        epd.exam_paper_id as examId,
+        eph.is_answered as isAnswered,
+        eph.answer_correct as answerCorrect,
+        eph.customer_answer as customerAnswer
+        from exam_paper_detail epd
+        join question q on epd.question_id = q.id
+        left join exam_paper_history eph on q.id = eph.question_id
+        <where>
+            <if test="customerId!=null and customerId!=''">and eph.customer_id = #{customerId}</if>
+            <if test="examPaperId!=null and examPaperId!=''">and epd.exam_paper_id = #{examPaperId}</if>
+        </where>
+    </select>
+    <select id="selectCustomerPaperScoreHistory" resultType="com.ruoyi.api.domain.dto.CustomerPaperScoreDto">
+        select ep.id,
+               ep.title paperName,
+               c.username as customerName,
+               customer_id,
+               exam_paper_id,
+               score,
+               customer_paper.create_time,
+               customer_paper.update_time
+        from customer_paper
+                left join customer c on customer_paper.customer_id = c.id
+                join exam_paper ep on customer_paper.exam_paper_id = ep.id
+
+        where customer_id = #{customerId}
+    </select>
+    <select id="selectExamPaperHistoryByCustomerId" resultType="com.ruoyi.api.domain.CustomerExamHistory">
+        select q.id                as id,
+               q.content           as title,
+               q.option            as 'option',
+               q.type              as type,
+               q.answer            as answer,
+               epd.score           as score,
+               epd.exam_paper_id   as examId,
+               eph.is_answered     as isAnswered,
+               eph.answer_correct  as answerCorrect,
+               eph.customer_answer as customerAnswer
+        from exam_paper_detail epd
+                 join question q on epd.question_id = q.id
+                 left join exam_paper_history eph on q.id = eph.question_id
+            and eph.customer_id = #{customerId}
+        where epd.exam_paper_id = #{examPaperId}
+order by q.id
+    </select>
+</mapper>

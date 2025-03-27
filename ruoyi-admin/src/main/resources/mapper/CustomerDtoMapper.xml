@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruoyi.api.mapper.CustomerDtoMapper">
+    <resultMap id="CustomerFavourDtoMap" type="com.ruoyi.api.domain.dto.CustomerFavourDto">
+        <result property="id"    column="id"/>
+        <result property="content" column="content"></result>
+        <result property="questionId" column="qid"></result>
+        <result property="favouriteTime" column="favourite_time"></result>
+    </resultMap>
+    <select id="selectCustomerQuestionServer" resultMap="CustomerFavourDtoMap">
+        select question.id qid,cf.id id, content, answer, type,score,cf.favourite_time from question
+            join customer_favor cf on question.id = cf.question_id
+        where customer_id=#{customerId}
+    </select>
+    <select id="selectCustomerInstitutionServer" resultType="com.ruoyi.api.domain.InstitutionData">
+        select i.id                as id,
+               i.companyname       as companyName,
+               ip.url              as insPic,
+               i.score             as score,
+               i.order_id          as orderId,
+               i.base              as institutionAddress,
+               i.legalperson       as legalPerson,
+               i.responsibleperson as responsiblePerson,
+               i.phone             as phone,
+               i.creditcode        as creditCode
+        from institution i
+                 left join institution_tag it on it.institution_id = i.id
+                 left join institution_picture ip on i.id = ip.institution_id
+                 join customer_favor cf on i.id = cf.institution_id
+        where customer_id = #{customerId}
+        order by cf.id
+    </select>
+    <select id="selectCustomerExamPaperServer"
+            resultType="com.ruoyi.web.controller.ExamPaper.domain.ExamPaper">
+        select exam_paper.id, title, description, creat_time, update_time from exam_paper
+join customer_favor cf on exam_paper.id = cf.exam_paper_id
+        where customer_id=#{customerId}
+    </select>
+    <select id="selectCustomerQuestionIdServer" resultType="java.lang.Long">
+        select question.id
+        from question
+                 join customer_favor cf on question.id = cf.question_id
+        where customer_id = #{customerId}
+    </select>
+</mapper>

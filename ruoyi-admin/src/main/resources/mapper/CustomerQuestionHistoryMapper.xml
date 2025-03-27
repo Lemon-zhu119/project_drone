@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.api.mapper.CustomerQuestionHistoryMapper">
+
+    <resultMap type="CustomerQuestionHistory" id="CustomerQuestionHistoryResult">
+        <result property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="customerId" column="customerId"/>
+        <result property="option" column="option"/>
+        <result property="answer" column="answer"/>
+        <result property="type" column="type"/>
+        <result property="score" column="score"/>
+        <result property="isAnswered" column="isAnswered"/>
+        <result property="answerCorrect" column="answerCorrect"/>
+        <result property="customerAnswer" column="customerAnswer"/>
+
+    </resultMap>
+    <sql id="questionsHistoryList">
+        select q.id               as id,
+               q.content          as title,
+               q.option           as 'option',
+               q.type             as type,
+               q.answer           as answer,
+               qh.customer_id     as customerId,
+               qh.customer_answer as customerAnswer,
+               qh.is_answered     as isAnswered,
+               qh.answer_correct  as answerCorrect
+        from question q
+                 left join question_history qh on qh.question_id = q.id
+        <where>
+            <if test="type != null  and type != ''"> and type = #{type}</if>
+        </where>
+    </sql>
+    <select id="selectQuestionsHistoryList" resultType="com.ruoyi.api.domain.CustomerQuestionHistory">
+        select q.id               as id,
+        q.content          as title,
+        q.option           as 'option',
+        q.type             as type,
+        q.answer           as answer,
+        qh.customer_id     as customerId,
+        qh.customer_answer as customerAnswer,
+        qh.is_answered     as isAnswered,
+        qh.answer_correct  as answerCorrect
+        from question q
+        left join question_history qh on qh.question_id = q.id and qh.customer_id = #{customerId}
+        <where>
+            <if test="type != null  and type != ''"> and type = #{type}</if>
+        </where>
+    </select>
+    <select id="selectNullTypeQuestionsHistoryList" resultType="com.ruoyi.api.domain.CustomerQuestionHistory">
+        select q.id               as id,
+               q.content          as title,
+               q.option           as 'option',
+               q.type             as type,
+               q.answer           as answer,
+               qh.customer_id     as customerId,
+               qh.customer_answer as customerAnswer,
+               qh.is_answered     as isAnswered,
+               qh.answer_correct  as answerCorrect
+        from question q
+                 left join question_history qh on qh.question_id = q.id and qh.customer_id = #{customerId}
+        where type is null
+    </select>
+</mapper>

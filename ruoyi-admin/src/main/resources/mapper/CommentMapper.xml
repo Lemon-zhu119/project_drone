@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.api.mapper.CommentMapper">
+
+    <resultMap type="CommentDto" id="CommentDtoResult">
+        <result property="id" column="id"/>
+        <result property="customerId" column="customerId"/>
+        <result property="institutionId"    column="institutionId"    />
+        <result property="customerAddress" column="customerAddress"/>
+        <result property="customerName"    column="customerName"    />
+        <result property="customerImg" column="customerImg"/>
+        <result property="commentImg"    column="commentImg"    />
+        <result property="comment" column="comment"/>
+        <result property="averageScore"    column="averageScore"    />
+        <result property="serviceScore"    column="serviceScore"    />
+        <result property="feeScore"    column="feeScore"    />
+        <result property="coachScore"    column="coachScore"    />
+        <result property="tag"    column="tag"    />
+        <result property="agreeNum"    column="agreeNum"    />
+        <result property="createTime"    column="createTime"    />
+    </resultMap>
+    <insert id="addcomment">
+        insert into comment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="customerId != null">customer_id,</if>
+            <if test="institutionId != null">institution_id,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="agreeNum != null">agreeNum,</if>
+            <if test="tag != null">tags,</if>
+            <if test="coachScore != null">coachservice_score,</if>
+            <if test="feeScore != null">fee_score,</if>
+            <if test="serviceScore != null">service_score,</if>
+            <if test="averageScore != null">average_score,</if>
+            <if test="comment != null">content,</if>
+            <if test="commentImg != null">picture,</if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="customerId != null">#{customerId},</if>
+            <if test="institutionId != null">#{institutionId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="agreeNum != null">#{agreeNum},</if>
+            <if test="tag != null">#{tag},</if>
+            <if test="coachScore != null">#{coachScore},</if>
+            <if test="feeScore != null">#{feeScore},</if>
+            <if test="serviceScore != null">#{serviceScore},</if>
+            <if test="averageScore != null">#{averageScore},</if>
+            <if test="comment != null">#{comment},</if>
+            <if test="commentImg != null">#{commentImg},</if>
+        </trim>
+
+    </insert>
+    <update id="updateNum">
+        update comment set agreenum=COALESCE(agreenum,0)+1 where id=#{commentId}
+    </update>
+    <update id="decrementNum">
+        update comment set agreenum = COALESCE(agreenum,0)-1 where id=#{commentId}
+
+    </update>
+    <update id="updateAgreeNum">
+        update comment set agreenum=#{Num} where id=#{commentId};
+    </update>
+    <delete id="delete">
+        delete from comment where id=#{id}
+    </delete>
+    <select id="selectCommentList" resultType="com.ruoyi.api.domain.dto.CommentDto">
+        select c.average_score as averageScore,
+               c.institution_id as institutionId,
+               c.fee_score as feeScore,
+               c.coachservice_score as coachScore,
+               c.service_score as serviceScore,
+               c.id as id,
+               customer.id as customerId,
+               c.content as comment,
+               c.picture as commentImg,
+               customer.avatar as  customerImg,
+               customer.username as customerName,
+               customer.address as customerAddress,
+               c.tags as tag,
+               c.agreenum as agreeNum,
+               c.create_time as createTime
+        from comment c
+        left join customer on  c.customer_id = customer.id
+        where c.institution_id=#{insId}
+    </select>
+    <select id="selectComentById" resultType="com.ruoyi.api.domain.dto.CommentDto">
+        select * from comment where id=#{id}
+    </select>
+
+
+</mapper>

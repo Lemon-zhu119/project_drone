@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.controller.swiper.mapper.SwiperPictureMapper">
+
+    <resultMap type="SwiperPicture" id="SwiperPictureResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="url"    column="url"    />
+        <result property="page"    column="page"    />
+    </resultMap>
+
+    <sql id="selectSwiperPictureVo">
+        select id,name,url,page from swiper_picture
+    </sql>
+
+    <select id="selectSwiperPictureList" parameterType="SwiperPicture" resultMap="SwiperPictureResult">
+        <include refid="selectSwiperPictureVo"/>
+        <where>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="url != null  and url != ''"> and url = #{url}</if>
+            <if test="page != null  and page != ''"> and page = #{page}</if>
+        </where>
+    </select>
+
+    <select id="selectSwiperPictureById" parameterType="Long" resultMap="SwiperPictureResult">
+        <include refid="selectSwiperPictureVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectswiperPic" resultType="com.ruoyi.web.controller.swiper.domain.SwiperPicture">
+        <include refid="selectSwiperPictureVo"/>
+        where page=#{page}
+
+    </select>
+
+    <insert id="insertSwiperPicture" parameterType="SwiperPicture">
+        insert into swiper_picture
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">name,</if>
+            <if test="url != null">url,</if>
+            <if test="page != null">page,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">#{name},</if>
+            <if test="url != null">#{url},</if>
+            <if test="page != null">#{page},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSwiperPicture" parameterType="SwiperPicture">
+        update swiper_picture
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="url != null">url = #{url},</if>
+            <if test="page != null">page = #{page},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSwiperPictureById" parameterType="Long">
+        delete from swiper_picture where id = #{id}
+    </delete>
+
+    <delete id="deleteSwiperPictureByIds" parameterType="String">
+        delete from swiper_picture where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

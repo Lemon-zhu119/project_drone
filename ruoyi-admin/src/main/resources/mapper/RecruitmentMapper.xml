@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruoyi.api.mapper.RecruitmentMapper">
+
+
+
+    <resultMap id="RecruitmentResult" type="Recruitment">
+        <result property="id" column="id"></result>
+        <result property="title" column="title"></result>
+        <result property="salary" column="salary"></result>
+        <result property="education" column="education"></result>
+        <result property="experience" column="experience"></result>
+        <result property="tags" column="tags"></result>
+        <result property="publishDate" column="publishDate"></result>
+        <result property="status" column="status"></result>
+        <result property="companyName" column="companyName"></result>
+        <result property="location" column="location"></result>
+        <result property="institutionId" column="institutionId"></result>
+        <result property="companyLogo" column="companyLogo"></result>
+    </resultMap>
+    <select id="selectList" resultType="com.ruoyi.api.domain.Recruitment">
+        select r.id as id,
+               r.title as title,
+               r.salary as salary,
+               r.education as education,
+               r.experience as experience,
+               r.tags as tags,
+               r.publish_date as publishDate,
+               r.institution_id as institutionId,
+               r.status as status,
+               i.companyname as companyName,
+               i.base as location,
+               ip.url as companyLogo
+        from recruitment r left join institution i on i.id = r.institution_id
+        left join institution_picture ip on r.institution_id = ip.institution_id
+        ORDER BY r.publish_date DESC
+    </select>
+</mapper>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.api.mapper.CityMapper">
+
+    <resultMap type="cityDto" id="CityDtoResult">
+        <result property="id" column="id"/>
+        <result property="label"    column="label"/>
+        <result property="provinceId"    column="provinceId"/>
+    </resultMap>
+    <select id="selectList" resultType="com.ruoyi.api.domain.CityDto">
+        select city.order_id as id,
+               city.name as label,
+               city.province_id as provinceId
+        from city
+        left join province p on p.id = city.province_id
+        where p.id=#{provinceId}
+    </select>
+
+
+</mapper>

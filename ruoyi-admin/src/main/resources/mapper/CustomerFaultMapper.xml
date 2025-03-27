@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.controller.customerFault.mapper.CustomerFaultMapper">
+    
+    <resultMap type="CustomerFault" id="CustomerFaultResult">
+        <result property="id"    column="id"    />
+        <result property="customerId"    column="customer_id"    />
+        <result property="questionId"    column="question_id"    />
+        <result property="examId"    column="exam_id"    />
+        <result property="attempTime"    column="attemp_time"    />
+    </resultMap>
+    <resultMap type="CustomerFaultDto" id="CustomerFaultDto">
+        <result property="id"    column="id"    />
+        <result property="customerId"    column="customer_id"    />
+        <result property="questionId"    column="question_id"    />
+        <result property="examId"    column="exam_id"    />
+        <result property="attempTime"    column="attemp_time"    />
+    </resultMap>
+    <sql id="selectCustomerFaultVo">
+        select id, customer_id, question_id, exam_id, attemp_time from customer_fault
+    </sql>
+
+    <select id="selectCustomerFaultList" parameterType="CustomerFault" resultMap="CustomerFaultResult">
+        <include refid="selectCustomerFaultVo"/>
+        <where>  
+            <if test="customerId != null "> and customer_id = #{customerId}</if>
+            <if test="questionId != null "> and question_id = #{questionId}</if>
+            <if test="examId != null "> and exam_id = #{examId}</if>
+        </where>
+    </select>
+    
+    <select id="selectCustomerFaultById" parameterType="Integer" resultMap="CustomerFaultResult">
+        <include refid="selectCustomerFaultVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectCustomerFaultDtoList" resultMap="CustomerFaultDto">
+        select q.id, cf.customer_id, question_id, exam_id, attemp_time, q.content as title
+        from customer_fault cf
+                 join question q on q.id = cf.question_id
+        where customer_id = #{customerId}
+    </select>
+
+    <insert id="insertCustomerFault" parameterType="CustomerFault" useGeneratedKeys="true" keyProperty="id">
+        insert into customer_fault
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="customerId != null">customer_id,</if>
+            <if test="questionId != null">question_id,</if>
+            <if test="examId != null">exam_id,</if>
+            <if test="attempTime != null">attemp_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="customerId != null">#{customerId},</if>
+            <if test="questionId != null">#{questionId},</if>
+            <if test="examId != null">#{examId},</if>
+            <if test="attempTime != null">#{attempTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCustomerFault" parameterType="CustomerFault">
+        update customer_fault
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="customerId != null">customer_id = #{customerId},</if>
+            <if test="questionId != null">question_id = #{questionId},</if>
+            <if test="examId != null">exam_id = #{examId},</if>
+            <if test="attempTime != null">attemp_time = #{attempTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCustomerFaultById" parameterType="Integer">
+        delete from customer_fault where id = #{id}
+    </delete>
+
+    <delete id="deleteCustomerFaultByIds" parameterType="String">
+        delete from customer_fault where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

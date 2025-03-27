@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruoyi.api.mapper.CommentLikeMapper">
+
+    <resultMap id="CommentLikeResult" type="CommentLike">
+        <result property="id" column="id"></result>
+        <result property="commentId" column="commentId"></result>
+        <result property="customerId" column="customerId"></result>
+        <result property="createTime" column="createTime"></result>
+        <result property="updateTime" column="updateTime"></result>
+    </resultMap>
+    <insert id="insert">
+        insert into comment_like
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="commentId != null">comment_id,</if>
+            <if test="customerId != null">customer_id,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="commentId != null">#{commentId},</if>
+            <if test="customerId != null">#{customerId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+
+    </insert>
+    <delete id="deleteById">
+        delete from comment_like where id=#{id}
+    </delete>
+
+
+    <select id="selelctCommentAndCustomer" resultType="com.ruoyi.api.domain.dto.CommentLike">
+
+    </select>
+    <select id="selectCommentAndCustomer" resultType="com.ruoyi.api.domain.dto.CommentLike">
+        select * from comment_like c where c.comment_id=#{commentId}
+        And c.customer_id=#{customerId}
+    </select>
+    <select id="exitBycustomerIdAndCommentId" resultType="java.lang.Boolean">
+        select count(*)>0 from comment_like cl where cl.comment_id=#{commentId} and cl.customer_id=#{customerId}
+    </select>
+    <select id="getActuallyCount" resultType="java.lang.Integer">
+        select count(*) from comment_like where comment_id=#{commentId}
+    </select>
+</mapper>

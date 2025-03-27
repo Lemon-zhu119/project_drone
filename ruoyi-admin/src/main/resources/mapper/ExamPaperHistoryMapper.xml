@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.api.mapper.ExamPaperHistoryMapper">
+
+    <resultMap type="ExamPaperHistory" id="ExamPaperHistoryResult">
+        <result property="id"    column="id"/>
+        <result property="customerId"    column="customer_id"/>
+        <result property="currentQuestionNumber"    column="current_question_number"/>
+        <result property="examPaperId"    column="exam_paper_id"/>
+        <result property="customerAnswer"    column="customer_answer"/>
+        <result property="questionId"    column="question_id"/>
+        <result property="isAnswered" column="is_answered"/>
+        <result property="answerCorrect" column="answer_correct" />
+
+
+    </resultMap>
+    <resultMap type="ExamPaperRecord" id="ExamPaperRecordResult">
+        <result property="id"    column="id"/>
+        <result property="startTime" column="startTime" />
+    </resultMap>
+
+    <sql id="selectExamPaperHistoryVo">
+        select id,customer_id,current_question_number,exam_paper_id,customer_answer,question_id,is_answered ,answer_correct from exam_paper_history
+    </sql>
+    <delete id="deleteExamHistory">
+        delete from exam_paper_history
+            where exam_paper_id= #{examId} and customer_id=#{customerId}
+    </delete>
+
+    <select id="selectExamPaperHistoryList" parameterType="ExamPaperHistory" resultMap="ExamPaperHistoryResult">
+        <include refid="selectExamPaperHistoryVo"/>
+        <where>
+            <if test="id != null  and id != ''"> and id = #{id}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="customerAnswer != null  and customerAnswer != ''"> and customer_answer = #{customerAnswer}</if>
+            <if test="examPaperId != null  and examPaperId != ''"> and exam_paper_id = #{examPaperId}</if>
+            <if test="questionId != null  and examPaperId != ''"> and question_id = #{questionId}</if>
+            <if test="customerId != null  and customerId != ''"> and customer_id = #{customerId}</if>
+            <if test="currentQuestionNumber != null  and currentQuestionNumber != ''"> and current_question_number = #{currentQuestionNumber}</if>
+            <if test="isAnswered != null  and isAnswered != ''"> and is_answered = #{isAnswered}</if>
+            <if test="answerCorrect != null  and answerCorrect != ''"> and answer_correct = #{answerCorrect}</if>
+        </where>
+    </select>
+
+    <select id="selectExamPaperHistoryById" parameterType="Long" resultMap="ExamPaperHistoryResult">
+        <include refid="selectExamPaperHistoryVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectQuestionsByExamPaperHistoryId" resultType="com.ruoyi.api.domain.ExamPaperHistory">
+        <include refid="selectExamPaperHistoryVo"/>
+        where id= #{id}
+    </select>
+    <select id="selectExamPaperHistoryListByCustomerId" resultType="com.ruoyi.api.domain.dto.ExamDto">
+        select *
+        from exam_paper ep
+                          LEFT JOIN exam_paper_history eph ON ep.id = eph.exam_paper_id
+                          LEFT JOIN exam_paper_record epr ON eph.exam_paper_id = epr.exam_paper_id
+        WHERE eph.exam_paper_id IS not NULL and eph.customer_id=#{customerId}
+    </select>
+    <select id="selectQuestionHistoryList" resultType="com.ruoyi.api.domain.ExamPaperHistory">
+
+    </select>
+    <select id="selectByExamId" resultMap="ExamPaperRecordResult">
+        SELECT eph.start_time as startTime
+        FROM exam_paper_record eph
+        WHERE exam_paper_id = #{id}
+        ORDER BY start_time DESC
+        LIMIT 1
+    </select>
+    <insert id="insertExamPaperHistory" parameterType="ExamPaperHistory">
+        insert into exam_paper_history
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="status != null">status,</if>
+            <if test="customerAnswer != null">customer_answer,</if>
+            <if test="examPaperId != null">exam_paper_id,</if>
+            <if test="customerId != null">customer_id,</if>
+            <if test="currentQuestionNumber != null">current_question_number,</if>
+            <if test="isAnswered != null">is_answered,</if>
+            <if test="questionId != null">question_id,</if>
+            <if test="answerCorrect != null">answer_correct,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="status != null">#{status},</if>
+            <if test="customerAnswer != null">#{customerAnswer},</if>
+            <if test="examPaperId != null">#{examPaperId},</if>
+            <if test="customerId != null">#{customerId},</if>
+            <if test="currentQuestionNumber != null">#{currentQuestionNumber},</if>
+            <if test="isAnswered != null">#{isAnswered},</if>
+            <if test="questionId != null">#{questionId},</if>
+            <if test="answerCorrect != null">#{answerCorrect},</if>
+         </trim>
+    </insert>
+    <insert id="insertExamPaperRecord">
+        insert into exam_paper_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="examPaperId != null">exam_paper_id,</if>
+            <if test="customerId != null">customer_id,</if>
+            <if test="startTime != null">start_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="examPaperId != null">#{examPaperId},</if>
+            <if test="customerId != null">#{customerId},</if>
+            <if test="startTime != null">#{startTime},</if>
+        </trim>
+    </insert>
+    <update id="updateExamPaperHistory" parameterType="ExamPaperHistory">
+        update exam_paper_history
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="status != null">status = #{status},</if>
+            <if test="customerAnswer != null">customer_answer = #{customerAnswer},</if>
+            <if test="examPaperId != null">exam_paper_id = #{examPaperId},</if>
+            <if test="customerId != null">customerId = #{customerId},</if>
+            <if test="currentQuestionNumber != null">exam_paper_id = #{examPaperId},</if>
+            <if test="isAnswered != null">is_answered = #{isAnswered},</if>
+            <if test="questionId != null">question_id = #{questionId},</if>
+            <if test="answerCorrect != null">answer_correct = #{answerCorrect},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+
+
+</mapper>

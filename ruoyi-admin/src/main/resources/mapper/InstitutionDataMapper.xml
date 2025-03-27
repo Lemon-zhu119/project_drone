@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.api.mapper.InstitutionDataMapper">
+
+    <resultMap type="InstitutionDateDto" id="InstitutionDtoResult">
+        <result property="id" column="id"/>
+        <result property="companyName"    column="companyName"    />
+        <result property="insPic"    column="insPic"    />
+        <result property="number"    column="number"    />
+        <result property="insTag"    column="insTag"    />
+        <result property="score"    column="score"    />
+        <result property="orderId"    column="orderId"    />
+        <result property="institutionAddress"    column="institutionAddress"    />
+        <result property="legalPerson"    column="legalPerson"    />
+        <result property="responsiblePerson"    column="responsiblePerson"    />
+        <result property="phone"    column="phone"    />
+        <result property="creditCode"    column="creditCode"    />
+        <result property="province"    column="province"    />
+        <result property="latitude"    column="latitude"    />
+        <result property="longitude"    column="longitude"    />
+        <result property="introduce"    column="introduce"    />
+
+    </resultMap>
+
+    <select id="getInstitutionList" resultType="com.ruoyi.api.domain.dto.InstitutionDateDto">
+        select
+            i.id AS id,
+            i.companyname AS companyName,
+            ip.url AS insPic,
+            i.score AS score,
+            i.order_id AS orderId,
+            i.base AS institutionAddress,
+            i.legalperson AS legalPerson,
+            i.responsibleperson AS responsiblePerson,
+            i.phone AS phone,
+            it.content as insTag,
+            i.creditcode AS creditCode,
+            i.province AS province,
+            i.longitude AS longitude,
+            i.latitude As latitude
+        from institution i
+                 left join institution_tag it on it.institution_id=i.id
+                 left join institution_picture ip on i.id = ip.institution_id
+    </select>
+    <select id="selectListByType" resultType="com.ruoyi.api.domain.dto.InstitutionDateDto">
+        select
+            i.id AS id,
+            i.companyname AS companyName,
+            ip.url AS insPic,
+            i.score AS score,
+            i.order_id AS orderId,
+            i.base AS institutionAddress,
+            i.legalperson AS legalPerson,
+            i.responsibleperson AS responsiblePerson,
+            i.phone AS phone,
+            it.content as insTag,
+            i.creditcode AS creditCode
+        from institution i
+                 join course c on c.institution_id=i.id
+                 left join institution_tag it on it.institution_id=i.id
+                 left join institution_picture ip on i.id = ip.institution_id
+        where c.subject=#{subject}
+    </select>
+    <select id="selectListByCity" resultType="com.ruoyi.api.domain.dto.InstitutionDateDto">
+        select
+            i.id AS id,
+            i.companyname AS companyName,
+            ip.url AS insPic,
+            i.score AS score,
+            i.order_id AS orderId,
+            i.base AS institutionAddress,
+            i.legalperson AS legalPerson,
+            i.responsibleperson AS responsiblePerson,
+            i.phone AS phone,
+            it.content as insTag,
+            i.creditcode AS creditCode,
+            i.latitude as latitude,
+            i.longitude as longitude
+        from institution i
+                 left join institution_tag it on it.institution_id=i.id
+                 left join institution_picture ip on i.id = ip.institution_id
+        where i.base like CONCAT('%',#{city},'%')
+    </select>
+    <select id="selectInsPic" resultType="com.ruoyi.api.domain.dto.InstitutionDateDto">
+        select url,name from institution_picture
+    </select>
+    <select id="selectListById" resultType="com.ruoyi.api.domain.dto.InstitutionDateDto">
+        SELECT
+            COUNT(DISTINCT cm.id) AS number,
+            i.id AS id,
+            i.introduce AS introduce,
+            i.companyname AS companyName,
+            ip.url AS insPic,
+            i.score AS score,
+            i.order_id AS orderId,
+            i.base AS institutionAddress,
+            i.legalperson AS legalPerson,
+            i.responsibleperson AS responsiblePerson,
+            i.phone AS phone,
+            it.content as insTag,
+            i.creditcode AS creditCode,
+            i.latitude as latitude,
+            i.longitude as longitude
+        FROM
+            institution i
+                LEFT JOIN course c ON c.institution_id = i.id
+                LEFT JOIN institution_tag it ON it.institution_id = i.id
+                LEFT JOIN institution_picture ip ON i.id = ip.institution_id
+                LEFT JOIN comment cm ON i.id = cm.institution_id -- 关联comments表
+        WHERE
+            i.id = #{id}
+        GROUP BY
+            i.id, i.companyname, ip.url, i.score, i.order_id, i.base, i.legalperson, i.responsibleperson, i.phone, i.creditcode,it.content
+    </select>
+    <select id="selectListByName" resultType="com.ruoyi.api.domain.dto.InstitutionDateDto">
+        select
+            i.id AS id,
+            i.companyname AS companyName,
+            ip.url AS insPic,
+            i.score AS score,
+            i.order_id AS orderId,
+            i.base AS institutionAddress,
+            i.legalperson AS legalPerson,
+            i.responsibleperson AS responsiblePerson,
+            i.phone AS phone,
+            it.content as insTag,
+            i.creditcode AS creditCode,
+            i.province AS province,
+            i.latitude as latitude,
+            i.longitude as longitude
+        from institution i
+                 left join institution_tag it on it.institution_id=i.id
+                 left join institution_picture ip on i.id = ip.institution_id
+        where i.companyname like concat('%',#{name},'%')
+    </select>
+    <select id="selectList" resultType="com.ruoyi.api.domain.dto.InstitutionDateDto">
+        select
+            i.id AS id,
+            i.companyname AS companyName,
+            ip.url AS insPic,
+            i.score AS score,
+            i.order_id AS orderId,
+            i.base AS institutionAddress,
+            i.legalperson AS legalPerson,
+            i.responsibleperson AS responsiblePerson,
+            i.phone AS phone,
+            it.content as insTag,
+            i.creditcode AS creditCode,
+            i.latitude as latitude,
+            i.longitude as longitude
+        from institution i
+                 left join institution_tag it on it.institution_id=i.id
+                 left join institution_picture ip on i.id = ip.institution_id
+    </select>
+    <select id="selectListByProvince" resultType="com.ruoyi.api.domain.dto.InstitutionDateDto">
+        select
+            i.id AS id,
+            i.companyname AS companyName,
+            ip.url AS insPic,
+            i.score AS score,
+            i.order_id AS orderId,
+            i.base AS institutionAddress,
+            i.legalperson AS legalPerson,
+            i.responsibleperson AS responsiblePerson,
+            i.phone AS phone,
+            it.content as insTag,
+            i.creditcode AS creditCode,
+            i.latitude as latitude,
+            i.longitude as longitude
+        from institution i
+                 left join institution_tag it on it.institution_id=i.id
+                 left join institution_picture ip on i.id = ip.institution_id
+        where i.province=#{province}
+    </select>
+<!--    <select id="selectListByConditions" resultMap="InstitutionDtoResult">-->
+<!--        select-->
+<!--        i.id AS id,-->
+<!--        i.companyname AS companyName,-->
+<!--        ip.url AS insPic,-->
+<!--        COALESCE(AVG(c.average_score), 0) AS score,-->
+<!--        i.order_id AS orderId,-->
+<!--        i.base AS institutionAddress,-->
+<!--        i.legalperson AS legalPerson,-->
+<!--        i.responsibleperson AS responsiblePerson,-->
+<!--        i.phone AS phone,-->
+<!--        it.content as insTag,-->
+<!--        i.creditcode AS creditCode,-->
+<!--        i.province AS province,-->
+<!--        i.longitude AS longitude,-->
+<!--        i.latitude As latitude,-->
+<!--        i.introduce As introduce-->
+<!--        from institution i-->
+<!--        left join institution_tag it on it.institution_id=i.id-->
+<!--        left join institution_picture ip on i.id = ip.institution_id-->
+<!--        left join comment c on i.id = c.institution_id-->
+
+<!--        WHERE-->
+<!--        1 = 1-->
+<!--        <if test="city != null and city != ''">-->
+<!--            AND i.base like concat('%', #{city}, '%')-->
+<!--        </if>-->
+<!--        <if test="subject != null and subject != ''">-->
+<!--            AND i.id IN (-->
+<!--            SELECT DISTINCT institution_id-->
+<!--            FROM course-->
+<!--            WHERE subject = #{subject}-->
+<!--            )-->
+<!--        </if>-->
+<!--        <if test="keyword != null and keyword != ''">-->
+<!--            AND-->
+<!--            (i.companyname LIKE CONCAT('%', #{keyword}, '%')|| i.base like concat('%',#{keyword},'%'))-->
+<!--        </if>-->
+<!--        GROUP BY i.id-->
+<!--    </select>-->
+    <select id="selectListByConditions" resultMap="InstitutionDtoResult">
+        SELECT
+        i.id AS id,
+        i.companyname AS companyName,
+        ip.url AS insPic,
+        (SELECT COALESCE(AVG(average_score), 0)
+        FROM comment
+        WHERE institution_id = i.id) AS score,  <!-- 子查询计算平均分 -->
+        i.order_id AS orderId,
+        i.base AS institutionAddress,
+        i.legalperson AS legalPerson,
+        i.responsibleperson AS responsiblePerson,
+        i.phone AS phone,
+        it.content as insTag,
+        i.creditcode AS creditCode,
+        i.province AS province,
+        i.longitude AS longitude,
+        i.latitude AS latitude,
+        i.introduce AS introduce
+        FROM institution i
+        LEFT JOIN institution_tag it ON it.institution_id = i.id
+        LEFT JOIN institution_picture ip ON i.id = ip.institution_id
+        WHERE 1 = 1
+        <if test="city != null and city != ''">
+            AND i.base LIKE CONCAT('%', #{city}, '%')
+        </if>
+        <if test="subject != null and subject != ''">
+            AND i.id IN (
+            SELECT DISTINCT institution_id
+            FROM course
+            WHERE subject = #{subject}
+            )
+        </if>
+        <if test="keyword != null and keyword != ''">
+            AND (
+            i.companyname LIKE CONCAT('%', #{keyword}, '%')
+            OR i.base LIKE CONCAT('%', #{keyword}, '%')
+            )
+        </if>
+    </select>
+    <select id="getCoordinates" resultType="java.util.Map" parameterType="java.lang.Integer">
+        select latitude,longitude from institution i
+        where i.id=#{id}
+    </select>
+</mapper>

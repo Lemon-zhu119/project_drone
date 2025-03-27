@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruoyi.api.mapper.SmsRecordMapper">
+    <update id="updateStatus">
+        UPDATE sms_record
+        SET status = #{record.status},
+            error_msg = #{record.errorMsg},
+            update_time = NOW()
+        WHERE phone = #{record.phone}
+          AND create_time = (
+            SELECT max_time FROM (
+                                     SELECT MAX(create_time) as max_time
+                                     FROM sms_record
+                                     WHERE phone = #{record.phone}
+                                 ) t
+        )
+    </update>
+</mapper>

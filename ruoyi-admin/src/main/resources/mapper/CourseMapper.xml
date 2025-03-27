@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruoyi.api.mapper.CourseMapper">
+
+    <resultMap type="Course" id="CourseResult">
+        <result property="id" column="id"/>
+        <result property="name"    column="name"    />
+        <result property="tag" column="tag"/>
+        <result property="subject"    column="customerName"    />
+        <result property="expense" column="customerImg"/>
+        <result property="coursePic"    column="commentImg"    />
+    </resultMap>
+    <select id="selectCourseList" resultType="com.ruoyi.api.domain.Course">
+        select c.id as id,
+               c.name as name,
+               c.tag as tag,
+               c.subject as subject,
+               c.expense as expense,
+               c.picture as coursePic
+        from course c join institution i on c.institution_id = i.id
+        where institution_id=#{institutionId}
+    </select>
+    <select id="selectCourseListByInstitutionAndCourseId" resultType="com.ruoyi.api.domain.Course">
+        select c.id as id,
+               c.name as name,
+               c.tag as tag,
+               c.subject as subject,
+               c.expense as expense,
+               c.picture as coursePic
+        from course c
+                 join institution i on c.institution_id = i.id
+        where institution_id = #{institutionId}
+    </select>
+
+
+</mapper>

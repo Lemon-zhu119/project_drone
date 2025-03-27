@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.controller.QuestionHistory.mapper.QuestionHistoryMapper">
+
+    <resultMap type="QuestionHistory" id="QuestionHistoryResult">
+        <result property="id"    column="id"    />
+        <result property="customerId"    column="customer_id"    />
+        <result property="questionId"    column="question_id"    />
+        <result property="isAnswered"    column="is_answered"    />
+        <result property="answerCorrect"    column="answer_correct"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="customerAnswer"    column="customer_answer"    />
+    </resultMap>
+
+    <sql id="selectQuestionHistoryVo">
+        select id, customer_id, question_id, is_answered, answer_correct, create_time, update_time, customer_answer from question_history
+    </sql>
+
+    <select id="selectQuestionHistoryList" parameterType="QuestionHistory" resultMap="QuestionHistoryResult">
+        <include refid="selectQuestionHistoryVo"/>
+        <where>
+            <if test="customerId != null "> and customer_id = #{customerId}</if>
+            <if test="questionId != null "> and question_id = #{questionId}</if>
+            <if test="isAnswered != null  and isAnswered != ''"> and is_answered = #{isAnswered}</if>
+            <if test="answerCorrect != null  and answerCorrect != ''"> and answer_correct = #{answerCorrect}</if>
+            <if test="customerAnswer != null  and customerAnswer != ''"> and customer_answer = #{customerAnswer}</if>
+        </where>
+    </select>
+
+    <select id="selectQuestionHistoryById" parameterType="Long" resultMap="QuestionHistoryResult">
+        <include refid="selectQuestionHistoryVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectQuestionHistoryDetail" resultType="java.lang.Integer">
+                   select count(*) from question_history
+                                   where customer_id=#{customerId}
+    </select>
+
+    <insert id="insertQuestionHistory" parameterType="QuestionHistory" useGeneratedKeys="true" keyProperty="id">
+        insert into question_history
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="customerId != null">customer_id,</if>
+            <if test="questionId != null">question_id,</if>
+            <if test="isAnswered != null">is_answered,</if>
+            <if test="answerCorrect != null">answer_correct,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="customerAnswer != null">customer_answer,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="customerId != null">#{customerId},</if>
+            <if test="questionId != null">#{questionId},</if>
+            <if test="isAnswered != null">#{isAnswered},</if>
+            <if test="answerCorrect != null">#{answerCorrect},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="customerAnswer != null">#{customerAnswer},</if>
+         </trim>
+    </insert>
+
+    <update id="updateQuestionHistory" parameterType="QuestionHistory">
+        update question_history
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="customerId != null">customer_id = #{customerId},</if>
+            <if test="questionId != null">question_id = #{questionId},</if>
+            <if test="isAnswered != null">is_answered = #{isAnswered},</if>
+            <if test="answerCorrect != null">answer_correct = #{answerCorrect},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="customerAnswer != null">customer_answer = #{customerAnswer},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteQuestionHistoryById" parameterType="Long">
+        delete from question_history where id = #{id}
+    </delete>
+
+    <delete id="deleteQuestionHistoryByIds" parameterType="String">
+        delete from question_history where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

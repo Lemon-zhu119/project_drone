@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.controller.ExamPaperDetail.mapper.ExamPaperDetailMapper">
+
+    <resultMap type="ExamPaperDetail" id="ExamPaperDetailResult">
+        <result property="id"    column="id"    />
+        <result property="questionId"    column="question_id"    />
+        <result property="examPaperId"    column="exam_paper_id"    />
+        <result property="questionOrderId"    column="question_order_id"    />
+        <result property="tag"    column="tag"    />
+        <result property="score"    column="score"    />
+    </resultMap>
+
+    <sql id="selectExamPaperDetailVo">
+        select id, question_id, exam_paper_id, question_order_id,tag, score from exam_paper_detail
+    </sql>
+
+    <select id="selectExamPaperDetailList" parameterType="ExamPaperDetail" resultMap="ExamPaperDetailResult">
+        <include refid="selectExamPaperDetailVo"/>
+        <where>
+            <if test="questionId != null  and questionId != ''"> and question_id =#{questionId}</if>
+            <if test="examPaperId != null  and examPaperId != ''">  and exam_paper_id =#{examPaperId}</if>
+            <if test="questionOrderId != null  and questionOrderId != ''">  and question_order_id =#{questionOrderId}</if>
+            <if test="tag != null  and tag != ''"> and tag like concat('%', #{tag}, '%')</if>
+            <if test="score != null  and score != ''">  and score =#{score}</if>
+        </where>
+    </select>
+
+    <select id="selectExamPaperDetailById" parameterType="Long" resultMap="ExamPaperDetailResult">
+        <include refid="selectExamPaperDetailVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertExamPaperDetail" parameterType="ExamPaperDetail" useGeneratedKeys="true" keyProperty="id">
+        insert into exam_paper_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="questionId != null">question_id,</if>
+            <if test="examPaperId != null">exam_paper_id,</if>
+            <if test="questionOrderId != null">question_order_id,</if>
+            <if test="tag != null">tag,</if>
+            <if test="score != null">score,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="questionId != null">#{questionId},</if>
+            <if test="examPaperId != null">#{examPaperId},</if>
+            <if test="questionOrderId != null">#{questionOrderId},</if>
+            <if test="tag != null">#{tag},</if>
+            <if test="score != null">#{score},</if>
+         </trim>
+    </insert>
+
+    <update id="updateExamPaperDetail" parameterType="ExamPaperDetail">
+        update exam_paper_detail
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="questionId != null">question_id = #{questionId},</if>
+            <if test="examPaperId != null">exam_paper_id = #{examPaperId},</if>
+            <if test="questionOrderId != null">question_order_id = #{questionOrderId},</if>
+            <if test="tag != null">tag = #{tag},</if>
+            <if test="score != null">score = #{score},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteExamPaperDetailById" parameterType="Long">
+        delete from exam_paper_detail where id = #{id}
+    </delete>
+
+    <delete id="deleteExamPaperDetailByIds" parameterType="String">
+        delete from exam_paper_detail where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <delete id="deleteExamPaperDetail" parameterType="ExamPaperDetail">
+        delete from exam_paper_detail
+        <where>
+            <if test="questionId != null  and questionId != ''"> and question_id =#{questionId}</if>
+            <if test="examPaperId != null  and examPaperId != ''">  and exam_paper_id =#{examPaperId}</if>
+            <if test="questionOrderId != null  and questionOrderId != ''">  and question_order_id =#{questionOrderId}</if>
+            <if test="tag != null  and tag != ''"> and tag like concat('%', #{tag}, '%')</if>
+            <if test="score != null  and score != ''">  and score =#{score}</if>
+        </where>
+    </delete>
+</mapper>
