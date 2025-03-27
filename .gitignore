@@ -42,6 +42,5 @@ nbdist/
 *.xml.versionsBackup
 *.swp
 
-!*/build/*.java
-!*/build/*.html
-!*/build/*.xml
+# 忽略 application.yml和application-druid.yml 文件
+application.yml
